@@ -1,75 +1,60 @@
-# Nuxt Minimal Starter
+# File Uploads (Nuxt + Vue)
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+![cover](assets/cover.png)
 
-## Setup
+A compact, elegant Nuxt + Vue repository created to practice building a reusable file upload component.
 
-Make sure to install dependencies:
+This project demonstrates a small, production-like pattern for a `FileUpload` component located at `components/FileUpload/FileUpload.vue` (see `components/FileUpload/`). Use it as a learning sandbox or a drop-in component for small projects.
+
+## What you'll find
+
+- A minimal Nuxt app scaffolded with TypeScript and modern tooling.
+- A focused `FileUpload` component with basic UI, validation and preview features.
+- Clean, readable code intended for learning and iterative improvement.
+
+Open `components/FileUpload/FileUpload.vue` to see how the component is implemented and customize validation, allowed types, and upload hooks.
+
+## Run locally (fast)
+
+Requirements:
+
+- Node.js (16+ recommended)
+- npm, yarn or pnpm
+
+Steps (cross-shell friendly):
 
 ```bash
-# npm
+# install deps
 npm install
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
+# start dev server
 npm run dev
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
+# build for production
 npm run build
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
+# preview production build locally
 npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+If you prefer pnpm or yarn replace `npm install` and the script invocations accordingly (for example `pnpm install` / `pnpm dev`).
+
+## Dependencies (high level)
+
+- Nuxt 3 (framework)
+- Vue 3 + TypeScript
+- ESLint + Prettier (linting & formatting)
+
+Specific versions are recorded in `package.json`.
+
+## Nice-to-have features (ideas)
+
+- Server-side upload endpoint (signed URLs / secure storage)
+- Chunked and resumable uploads for large files
+- Upload retry with exponential backoff and queued uploads
+- Unit and E2E tests for the component
+- Accessibility improvements (keyboard + screen reader support)
+
+## Contributing
+
+This repo is a personal practice project — contributions are welcome. Open a PR with a clear description of the change and a short demo or screenshots when relevant.
