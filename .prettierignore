@@ -1,0 +1,12 @@
+# Ignore artifacts:
+build
+coverage
+.nuxt
+dist
+package-lock.json
+
+node_modules
+
+# Custom
+public/uploads
+course
