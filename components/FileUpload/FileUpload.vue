@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 const files = ref<File[]>([]);
 
+const isDropping = ref(false);
+
 const acceptedFileTypes = [
-  "image/*",
-  "video/*",
-  "application/pdf",
-  "text/plain",
+  'image/*',
+  'video/*',
+  'application/pdf',
+  'text/plain',
 ];
 
-type FilePreview = { type: "image" | "video"; url: string } | null;
+type FilePreview = { type: 'image' | 'video'; url: string } | null;
 
 const freeOldPreviewURL = (preview: FilePreview) => {
   if (!preview) return;
@@ -23,14 +25,14 @@ const previews = computed<FilePreview[]>((oldPreviews) => {
   oldPreviews?.forEach(freeOldPreviewURL);
 
   return files.value.map((file) => {
-    if (file.type.startsWith("image/")) {
+    if (file.type.startsWith('image/')) {
       return {
-        type: "image",
+        type: 'image',
         url: URL.createObjectURL(file),
       };
-    } else if (file.type.startsWith("video/")) {
+    } else if (file.type.startsWith('video/')) {
       return {
-        type: "video",
+        type: 'video',
         url: URL.createObjectURL(file),
       };
     }
@@ -41,10 +43,10 @@ const previews = computed<FilePreview[]>((oldPreviews) => {
 
 const isFileTypeAccepted = (file: File): boolean => {
   return acceptedFileTypes.some((type) => {
-    if (type === "image/*") {
-      return file.type.startsWith("image/");
-    } else if (type === "video/*") {
-      return file.type.startsWith("video/");
+    if (type === 'image/*') {
+      return file.type.startsWith('image/');
+    } else if (type === 'video/*') {
+      return file.type.startsWith('video/');
     } else {
       return file.type === type;
     }
@@ -70,7 +72,13 @@ const handleFileSelected = (e: Event) => {
 
   const selectedFiles = Array.from(target.files);
   const validFiles = selectedFiles.filter(isValidFile);
-  files.value = files.value.concat(validFiles);
+  validFiles.forEach((file) => {
+    if (
+      !files.value.find((f) => f.name === file.name && f.size === file.size)
+    ) {
+      files.value.push(file);
+    }
+  });
 };
 
 onUnmounted(() => {
@@ -79,16 +87,35 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <label class="block border w-full max-w-3xl p-3 rounded cursor-pointer">
+  <div
+    class="relative flex border-3 border-dashed border-gray-300 w-full max-w-3xl px-3 py-12 rounded"
+    :class="{ 'bg-sky-100/50 border-sky-300': isDropping }"
+    @dragover="isDropping = true"
+    @dragleave="isDropping = false"
+    @drop="
+      isDropping = false;
+      handleFileSelected($event);
+    "
+  >
     <input
+      class="absolute inset-0 opacity-0 cursor-pointer"
       type="file"
       :accept="acceptedFileTypes.join(',')"
-      class="hidden"
       multiple
       @change="handleFileSelected"
     />
-    <p class="text-center text-gray-500">Upload files</p>
-  </label>
+    <div class="w-full text-center text-gray-500 self-center">
+      <p class="text-xl" :class="{ 'text-sky-500': isDropping }">
+        Upload files
+      </p>
+      <p
+        class="w-full text-center text-gray-400 self-center"
+        :class="{ 'text-sky-300': isDropping }"
+      >
+        Drag and drop files here
+      </p>
+    </div>
+  </div>
 
   <ul class="mt-4">
     <li v-for="(file, index) in files" :key="file.name" class="pb-4">
