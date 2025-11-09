@@ -91,10 +91,10 @@ onUnmounted(() => {
   </label>
 
   <ul class="mt-4">
-    <li v-for="(file, index) in files" :key="file.name" class="mb-4">
+    <li v-for="(file, index) in files" :key="file.name" class="pb-4">
       {{ file.name }}
 
-      <div v-if="previews[index]" class="mt-2 max-h-48">
+      <div v-if="previews[index]" class="mt-2 max-h-48 overflow-hidden">
         <img
           v-if="previews[index].type === 'image'"
           :src="previews[index].url"
@@ -103,7 +103,8 @@ onUnmounted(() => {
         <video
           v-if="previews[index].type === 'video'"
           :src="previews[index].url"
-          controls
+          muted
+          :autoplay="false"
         />
       </div>
     </li>
