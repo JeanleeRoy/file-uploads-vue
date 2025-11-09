@@ -12,6 +12,33 @@ const acceptedFileTypes = [
   "text/plain",
 ];
 
+type FilePreview = { type: "image" | "video"; url: string } | null;
+
+const freeOldPreviewURL = (preview: FilePreview) => {
+  if (!preview) return;
+  URL.revokeObjectURL(preview.url);
+};
+
+const previews = computed<FilePreview[]>((oldPreviews) => {
+  oldPreviews?.forEach(freeOldPreviewURL);
+
+  return files.value.map((file) => {
+    if (file.type.startsWith("image/")) {
+      return {
+        type: "image",
+        url: URL.createObjectURL(file),
+      };
+    } else if (file.type.startsWith("video/")) {
+      return {
+        type: "video",
+        url: URL.createObjectURL(file),
+      };
+    }
+
+    return null;
+  });
+});
+
 const isFileTypeAccepted = (file: File): boolean => {
   return acceptedFileTypes.some((type) => {
     if (type === "image/*") {
@@ -43,8 +70,12 @@ const handleFileSelected = (e: Event) => {
 
   const selectedFiles = Array.from(target.files);
   const validFiles = selectedFiles.filter(isValidFile);
-  files.value = validFiles;
+  files.value = files.value.concat(validFiles);
 };
+
+onUnmounted(() => {
+  previews.value.forEach(freeOldPreviewURL);
+});
 </script>
 
 <template>
@@ -53,14 +84,28 @@ const handleFileSelected = (e: Event) => {
       type="file"
       :accept="acceptedFileTypes.join(',')"
       class="hidden"
+      multiple
       @change="handleFileSelected"
     />
     <p class="text-center text-gray-500">Upload files</p>
   </label>
 
   <ul class="mt-4">
-    <li v-for="file in files" :key="file.name">
+    <li v-for="(file, index) in files" :key="file.name" class="mb-4">
       {{ file.name }}
+
+      <div v-if="previews[index]" class="mt-2 max-h-48">
+        <img
+          v-if="previews[index].type === 'image'"
+          :src="previews[index].url"
+          :alt="file.name"
+        />
+        <video
+          v-if="previews[index].type === 'video'"
+          :src="previews[index].url"
+          controls
+        />
+      </div>
     </li>
   </ul>
 </template>
